@@ -331,10 +331,10 @@ class WAS_Image_Save:
         return {
             "required": {
                 "images": ("IMAGE", ),
-                "output_path_drive": ("STRING", {"default": "", "multiline": False}),
-                "output_path_folder": ("STRING", {"default": '[time(%Y-%m-%d)]', "multiline": False}),
-                "filename_prefix": ("STRING", {"default": "ComfyUI"}),
-                "filename_suffix": ("STRING", {"default": "", "multiline": False}),
+                "盘符": ("STRING", {"default": "", "multiline": False}),
+                "文件夹": ("STRING", {"default": '[time(%Y-%m-%d)]', "multiline": False}),
+                "文件名前缀": ("STRING", {"default": "ComfyUI"}),
+                "文件名后缀": ("STRING", {"default": "", "multiline": False}),
                 "filename_delimiter": ("STRING", {"default":"_"}),
                 "filename_number_padding": ("INT", {"default":4, "min":1, "max":9, "step":1}),
                 "filename_number_start": (["false", "true"],),
@@ -363,7 +363,7 @@ class WAS_Image_Save:
 
     CATEGORY = "WAS Suite/IO"
 
-    def was_save_images(self, images, output_path_drive='', output_path_folder='[time(%Y-%m-%d)]', filename_prefix="ComfyUI", filename_suffix='', filename_delimiter='_',
+    def was_save_images(self, images, 盘符='', 文件夹='[time(%Y-%m-%d)]', 文件名前缀="ComfyUI", 文件名后缀='', filename_delimiter='_',
                         extension='png', dpi=96, quality=100, optimize_image="true", lossless_webp="false", prompt=None, extra_pnginfo=None,
                         overwrite_mode='false', filename_number_padding=4, filename_number_start='false',
                         show_history='false', show_history_by_prefix="true", embed_workflow="true",
@@ -374,9 +374,9 @@ class WAS_Image_Save:
         lossless_webp = (lossless_webp == "true")
         optimize_image = (optimize_image == "true")
 
-        # Combine split fields: output_path = drive + folder ; filename_prefix = prefix + suffix
-        output_path = (output_path_drive or '') + (output_path_folder or '')
-        filename_prefix = (filename_prefix or '') + (filename_suffix or '')
+        # Combine split fields: output_path = 盘符 + 文件夹 ; filename_prefix = 文件名前缀 + 文件名后缀
+        output_path = (盘符 or '') + (文件夹 or '')
+        filename_prefix = (文件名前缀 or '') + (文件名后缀 or '')
 
         # Define token system
         tokens = TextTokens()
