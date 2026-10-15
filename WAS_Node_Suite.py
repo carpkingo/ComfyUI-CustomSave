@@ -376,7 +376,19 @@ class WAS_Image_Save:
         optimize_image = (optimize_image == "true")
 
         # Combine split fields: output_path = 盘符 + 主文件夹 + 副文件夹 ; filename_prefix = 文件名前缀 + 文件名后缀
-        output_path = (盘符 or '') + (主文件夹 or '') + (副文件夹 or '')
+        drive = (盘符 or '').strip()
+        folder = (主文件夹 or '') + (副文件夹 or '')
+        if drive:
+            # 单字母视为盘符（如 "W" -> "W:"），并保证盘符与文件夹之间以分隔符相接，使路径成为绝对路径
+            if len(drive) == 1 and drive.isalpha():
+                drive += ':'
+            if not drive.endswith(('\\', '/')):
+                drive += '\\'
+            if folder.startswith(('\\', '/')):
+                folder = folder[1:]
+            output_path = drive + folder
+        else:
+            output_path = folder
         filename_prefix = (文件名前缀 or '') + (文件名后缀 or '')
 
         # Define token system
