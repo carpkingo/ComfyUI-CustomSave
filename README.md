@@ -1,75 +1,53 @@
 # CustomSave
 
-一个基于 [ComfyUI](https://github.com/comfyanonymous/ComfyUI) 的节点套件，涵盖图像处理、文本处理、遮罩处理、采样器、视频等常用节点。
+一个基于 [ComfyUI](https://github.com/comfyanonymous/ComfyUI) 的 **图片保存节点**（Image Save）。
 
-> **说明：** 本节点由原作者 [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui) 修改而来，仅作本地化改名与适配，功能与原套件保持一致。在此向原作者致谢。
-
----
-
-## 来源与致谢（Attribution）
-
-| 项目 | 内容 |
-| --- | --- |
-| 原项目名称 | WAS Node Suite |
-| 原作者 | Jordan Thompson（WASasquatch） |
-| 原项目地址 | https://github.com/WASasquatch/was-node-suite-comfyui |
-| 原许可证 | MIT License |
-
-本套件基于 MIT 协议在原项目基础上修改，保留原版权与许可声明（见 [`LICENSE`](./LICENSE)）。
+> **说明：** 本节点由原作者 [WAS Node Suite](https://github.com/WASasquatch/was-node-suite-comfyui) 修改而来，**仅保留 Image Save（图片保存）节点**，移除其余全部节点，保存功能与原版一致。在此向原作者致谢。
 
 ---
 
-## 功能简介
+## 功能
 
-节点按类别划分，主要包括：
+**Image Save** 节点用于将生成的图片保存为文件，支持：
 
-- **图像处理**：裁剪、缩放、旋转、滤镜、模糊、噪点、通道混合、风格化、无缝纹理等
-- **图像生成与合成**：网格图、批量合成、马赛克/像素化、渐变、Perlin 噪声等
-- **遮罩（Mask）**：遮罩生成、区域裁剪、腐蚀/膨胀、平滑、组合等
-- **文本处理**：字符串拼接、查找替换、字典、分词、Token 解析、随机行等
-- **采样与模型**：KSampler（WAS）、KSampler Cycle、各类输入开关、Loaders、LoRA 等
-- **文件读写**：Image Save、Save Text File、Load Text File、Image Load、视频读写等
-- **逻辑与数值**：布尔逻辑、数值运算、常量、随机数、条件判断等
-- **附加节点**：BLIP 图像描述、SAM 图像分割、MiDaS 深度估计等
-
-完整节点列表请参考原项目文档：[WAS Node Suite 文档](https://docs.getsalt.ai/md/was-node-suite-comfyui/)。
+- 自定义输出路径与文件名前缀
+- 多种保存格式：`png`、`jpg`、`jpeg`、`gif`、`tiff`、`webp`、`bmp`
+- 可调质量 / DPI / 优化选项 / 无损 WebP
+- 文件名自动编号（可设补零位数、编号位置）
+- 嵌入 Prompt 与 Workflow 元数据
+- 历史预览（可显示最近保存的图片）
+- 文件名支持文本 Token（时间、主机名、CUDA 设备等）
 
 ---
 
-## 安装
+## Image Save 节点参数
 
-1. 将本目录放置到 ComfyUI 的 `custom_nodes` 目录下：
+| 参数 | 说明 | 默认值 |
+| --- | --- | --- |
+| `images` | 输入的图片（IMAGE） | — |
+| `output_path` | 输出目录，支持 Token；相对路径基于 ComfyUI/output | `[time(%Y-%m-%d)]` |
+| `filename_prefix` | 文件名前缀 | `ComfyUI` |
+| `filename_delimiter` | 前缀与编号间的分隔符 | `_` |
+| `filename_number_padding` | 编号补零位数（1–9） | `4` |
+| `filename_number_start` | 编号放在前缀前 / 后 | `false` |
+| `extension` | 保存格式 | `png` |
+| `dpi` | DPI（1–2400） | `300` |
+| `quality` | 质量（1–100） | `100` |
+| `optimize_image` | 是否优化图片 | `true` |
+| `lossless_webp` | WebP 无损 | `false` |
+| `overwrite_mode` | 覆盖模式：`false` / `prefix_as_filename` | `false` |
+| `show_history` | 是否显示历史保存的图片 | `false` |
+| `show_history_by_prefix` | 历史预览是否按前缀过滤 | `true` |
+| `embed_workflow` | 是否嵌入 Prompt / Workflow 元数据 | `true` |
+| `show_previews` | 是否显示预览 | `true` |
 
-   ```
-   ComfyUI/custom_nodes/ComfyUI-CustomSave/
-   ```
-
-2. 安装依赖（在套件目录下执行）：
-
-   - **便携版 / venv 环境：**
-     ```
-     path/to/ComfyUI/python_embeded/python.exe -s -m pip install -r requirements.txt
-     ```
-   - **系统 Python 环境：**
-     ```
-     pip install -r requirements.txt
-     ```
-
-3. 启动 / 重启 ComfyUI，节点会自动加载。
-
-> 如需自动安装依赖，也可直接运行本目录下的 `install.bat`。
+**输出：** `images`（原图）、`files`（保存的文件路径列表）
 
 ---
 
-## 使用说明
+## 文件名 Token
 
-- 节点默认位于 ComfyUI 的对应分类菜单中。
-- **Save Image** 支持自定义路径与多种格式（PNG / JPG / WebP 等），并可在文件名中使用文本 Token。
-- 部分节点首次运行会尝试自动安装依赖（如 `matplotlib`、`scikit-learn`、`pilgram`），请确保网络可用。
-
-### 文本 Token
-
-可在 **Save Text File**、**Save Image** 等节点中使用 Token 自定义文件名：
+在 `filename_prefix` 或 `output_path` 中可使用 Token：
 
 | Token | 说明 |
 | --- | --- |
@@ -83,16 +61,28 @@
 
 ---
 
-## 配置（was_suite_config.json）
+## 安装
 
-首次运行会在套件目录下生成 `was_suite_config.json`，可配置：
+1. 将本文件夹放到 ComfyUI 的 `custom_nodes` 目录下：
 
-- `webui_styles`：导入 AUTOMATIC1111 WebUI 的 `styles.csv` 样式
-- `wildcards_path`：自定义通配符目录
-- `ffmpeg_extra_codecs`：视频节点的额外编码格式
-- `use_legacy_ascii_text`：是否使用旧版 ASCII 文本输出
+   ```
+   ComfyUI/custom_nodes/ComfyUI-CustomSave/
+   ```
 
-修改后需重启 ComfyUI 生效。
+2. 重启 ComfyUI 即可加载。
+
+> 依赖仅 `pillow` 和 `numpy`，ComfyUI 自带，无需额外安装。
+
+---
+
+## 来源与致谢（Attribution）
+
+| 项目 | 内容 |
+| --- | --- |
+| 原项目名称 | WAS Node Suite |
+| 原作者 | Jordan Thompson（WASasquatch） |
+| 原项目地址 | https://github.com/WASasquatch/was-node-suite-comfyui |
+| 原许可证 | MIT License |
 
 ---
 
