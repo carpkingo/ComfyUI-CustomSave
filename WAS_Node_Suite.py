@@ -332,7 +332,8 @@ class WAS_Image_Save:
             "required": {
                 "images": ("IMAGE", ),
                 "盘符": ("STRING", {"default": "", "multiline": False}),
-                "文件夹": ("STRING", {"default": '[time(%Y-%m-%d)]', "multiline": False}),
+                "主文件夹": ("STRING", {"default": "", "multiline": False}),
+                "副文件夹": ("STRING", {"default": '[time(%Y-%m-%d)]', "multiline": False}),
                 "文件名前缀": ("STRING", {"default": "ComfyUI"}),
                 "文件名后缀": ("STRING", {"default": "", "multiline": False}),
                 "filename_delimiter": ("STRING", {"default":"_"}),
@@ -363,7 +364,7 @@ class WAS_Image_Save:
 
     CATEGORY = "WAS Suite/IO"
 
-    def was_save_images(self, images, 盘符='', 文件夹='[time(%Y-%m-%d)]', 文件名前缀="ComfyUI", 文件名后缀='', filename_delimiter='_',
+    def was_save_images(self, images, 盘符='', 主文件夹='', 副文件夹='[time(%Y-%m-%d)]', 文件名前缀="ComfyUI", 文件名后缀='', filename_delimiter='_',
                         extension='png', dpi=96, quality=100, optimize_image="true", lossless_webp="false", prompt=None, extra_pnginfo=None,
                         overwrite_mode='false', filename_number_padding=4, filename_number_start='false',
                         show_history='false', show_history_by_prefix="true", embed_workflow="true",
@@ -374,8 +375,8 @@ class WAS_Image_Save:
         lossless_webp = (lossless_webp == "true")
         optimize_image = (optimize_image == "true")
 
-        # Combine split fields: output_path = 盘符 + 文件夹 ; filename_prefix = 文件名前缀 + 文件名后缀
-        output_path = (盘符 or '') + (文件夹 or '')
+        # Combine split fields: output_path = 盘符 + 主文件夹 + 副文件夹 ; filename_prefix = 文件名前缀 + 文件名后缀
+        output_path = (盘符 or '') + (主文件夹 or '') + (副文件夹 or '')
         filename_prefix = (文件名前缀 or '') + (文件名后缀 or '')
 
         # Define token system
