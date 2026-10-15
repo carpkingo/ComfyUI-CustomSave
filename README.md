@@ -25,8 +25,10 @@
 | 参数 | 说明 | 默认值 |
 | --- | --- | --- |
 | `images` | 输入的图片（IMAGE） | — |
-| `output_path` | 输出目录，支持 Token；相对路径基于 ComfyUI/output | `[time(%Y-%m-%d)]` |
+| `output_path_drive` | 输出盘符（如 `D:`；留空则按相对路径存到 ComfyUI/output） | `""` |
+| `output_path_folder` | 输出文件夹，支持 Token；相对路径基于 ComfyUI/output | `[time(%Y-%m-%d)]` |
 | `filename_prefix` | 文件名前缀 | `ComfyUI` |
+| `filename_suffix` | 文件名后缀（拼接在前缀之后） | `""` |
 | `filename_delimiter` | 前缀与编号间的分隔符 | `_` |
 | `filename_number_padding` | 编号补零位数（1–9） | `4` |
 | `filename_number_start` | 编号放在前缀前 / 后 | `false` |
@@ -47,7 +49,7 @@
 
 ## 文件名 Token
 
-在 `filename_prefix` 或 `output_path` 中可使用 Token：
+在 `output_path_folder`、`filename_prefix`、`filename_suffix` 中可使用 Token。输出路径 = `output_path_drive` + `output_path_folder`，文件名前缀 = `filename_prefix` + `filename_suffix`：
 
 | Token | 说明 |
 | --- | --- |
